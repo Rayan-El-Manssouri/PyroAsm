@@ -1,6 +1,5 @@
 @echo off
 setlocal
-chcp 65001 > nul
 set "scriptPath=C:\Program Files\PyroAsm\bin\main.py"
 
 rem Vérifier si l'option "--version" est présente
