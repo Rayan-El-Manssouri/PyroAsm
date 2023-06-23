@@ -1,1 +1,0 @@
-echo "ceci est un point d'entrée pour pyroasm"
