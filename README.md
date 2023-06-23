@@ -10,6 +10,14 @@
 ## Description
 PyroAsm est un langage de bas niveau optimisé pour la création de fenêtres Windows, basé sur un système de composants similaire à React.
 
+## Sommaire (Table of Contents)
+- [Description](#description)
+- [Conversion en applications web, Android et iOS](#conversion-en-applications-web-android-et-ios)
+- [Installation](#installation)
+- [Fonctions disponibles](#fonctions-disponibles)
+- [Fichier pris en charge](#fichier-pris-en-charge)
+
+
 ## Conversion en applications web, Android et iOS
 PyroAsm offre la possibilité de convertir facilement votre code en applications web, Android et iOS.
 
