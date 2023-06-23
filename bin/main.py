@@ -17,7 +17,7 @@ class Compilateur:
         # Traiter les arguments
         compteur_erreurs = 0  # Compteur d'erreurs
         for argument in arguments:
-            with open(argument, "r") as file:
+            with open(argument, "r", encoding="utf-8") as file:
                 code = file.read()
                 matches = re.findall(r'const\s+(\w+)\s*=\s*(.+)', code)
                 variables = {}
@@ -55,10 +55,10 @@ class Compilateur:
 
     def evaluate_expression(self, expression, variables):
         for variable_name, variable_value in variables.items():
-            expression = expression.replace(variable_name, variable_value)
+            expression = expression.replace(variable_name, str(variable_value))
         try:
-            return str(eval(expression, {"const": lambda x: str(variables.get(x, x))}, {}))
-        except TypeError:
+            return str(eval(expression, variables))
+        except (NameError, TypeError, SyntaxError):
             return expression
 
 
