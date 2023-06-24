@@ -32,9 +32,11 @@ class Compilateur:
                     fonction, value = match
                     if fonction in self.fonctions_autorisees:
                         if fonction == "pyrint":
-                            value = value.strip('"')
-                            value = self.evaluate_expression(value, variables)
+                            if value.startswith('"') and value.endswith('"'):
+                                value = value[1:-1]
+                            value = self.replace_variables(value, variables)  # Remplacer les variables
                             print(value)
+
                     else:
                         suggestion = None
                         for f in self.fonctions_autorisees:
@@ -46,6 +48,7 @@ class Compilateur:
                             print("Vouliez-vous dire :", suggestion + "()" + Fore.RESET)
                         compteur_erreurs += 1
 
+
         # Afficher le message de fin de compilation et le nombre d'erreurs
         print(Fore.GREEN + "La compilation est terminée." + Fore.RESET)
         if compteur_erreurs == 0:
@@ -53,13 +56,21 @@ class Compilateur:
         else:
             print(Fore.RED + "Nombre total d'erreurs de frappe :", str(compteur_erreurs) + Fore.RESET)
 
+
     def evaluate_expression(self, expression, variables):
-        for variable_name, variable_value in variables.items():
-            expression = expression.replace(variable_name, str(variable_value))
-        try:
-            return str(eval(expression, variables))
-        except (NameError, TypeError, SyntaxError):
-            return expression
+        return eval(expression, variables)
+
+
+    def replace_variables(self, value, variables):
+        def replace_variable(match):
+            variable_name = match.group(1)
+            if variable_name in variables:
+                return str(variables[variable_name])
+            else:
+                return match.group(0)
+
+        value = re.sub(r'\$(\w+)', replace_variable, value)
+        return value
 
 
 # Utilisation de la classe Compilateur
