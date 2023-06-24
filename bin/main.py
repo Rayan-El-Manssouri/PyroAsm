@@ -7,6 +7,7 @@ from PyQt6.QtCore import Qt
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt6.QtGui import QColor, QPalette
+from PyQt6.QtGui import QIcon
 # Initialiser colorama
 init()
 
@@ -53,6 +54,35 @@ class Compilateur:
                             print(value)
                         if fonction == "pyrowin" and value == '""':
                             self.create_window()
+                            if value == '""':
+                                self.create_window()
+                            elif value.startswith("Settings"):
+                                settings_arg = ""
+                                multiline_settings = False
+
+                                # Parcours les lignes suivantes pour obtenir l'argument de Settings complet
+                                for line in code.splitlines()[code.splitlines().index(fonction + "(" + value) + 1:]:
+                                    if ")" in line:
+                                        settings_arg += line.split(")")[0]
+                                        break
+                                    else:
+                                        settings_arg += line
+                                        multiline_settings = True
+
+                                if multiline_settings:
+                                    # Continue de lire les lignes suivantes jusqu'à trouver la fin de l'argument
+                                    for line in code.splitlines()[code.splitlines().index(fonction + "(" + value) + 2:]:
+                                        if ")" in line:
+                                            settings_arg += line.split(")")[0]
+                                            break
+                                        else:
+                                            settings_arg += line
+
+                                if "icon" in settings_arg:
+                                    icon_name = re.findall(r'icon:\s*"(.+)"', settings_arg)
+                                    if icon_name:
+                                        icon_path = icon_name[0]
+                                        print("Chemin de l'icône :", icon_path)
 
                     else:
                         suggestion = None
@@ -102,10 +132,11 @@ class Compilateur:
         widget = QWidget()
         widget.setLayout(layout)
         window.setCentralWidget(widget)
+        # definir une icon
+        icon = QIcon(r"C:\\Program Files\\PyroAsm\\assets\\logo.png")
+        window.setWindowIcon(icon)
         window.show()
         sys.exit(app.exec())
-
-
 
 # Utilisation de la classe Compilateur
 arguments = sys.argv[1:]  # Ignorer le premier argument (nom du script)
