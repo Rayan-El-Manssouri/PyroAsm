@@ -1,6 +1,7 @@
 import sys
 import re
 from colorama import init, Fore
+from PyQt6.QtWidgets import QApplication, QMainWindow
 
 # Initialiser colorama
 init()
@@ -8,7 +9,7 @@ init()
 class Compilateur:
     def __init__(self):
         # Liste des noms de fonctions autorisées
-        self.fonctions_autorisees = ["pyrint", "+", "-", "*", "/", "%", "^=", "const"]
+        self.fonctions_autorisees = ["pyrint", "+", "-", "*", "/", "%", "^=", "const", "pyrowin"]
 
     def compiler(self, arguments):
         # Afficher le message de début de compilation
@@ -36,6 +37,8 @@ class Compilateur:
                                 value = value[1:-1]
                             value = self.replace_variables(value, variables)  # Remplacer les variables
                             print(value)
+                        if fonction == "pyrowin" and value == '""':
+                            self.create_window()
 
                     else:
                         suggestion = None
@@ -71,6 +74,15 @@ class Compilateur:
 
         value = re.sub(r'\$(\w+)', replace_variable, value)
         return value
+    
+    def create_window(self):
+        app = QApplication(sys.argv)
+        window = QMainWindow()
+        window.setWindowTitle("PyRowin")
+        window.resize(800, 600)
+        # Ajoute ici le code pour configurer et afficher ta fenêtre graphique avec PyQt6
+        window.show()
+        sys.exit(app.exec())
 
 
 # Utilisation de la classe Compilateur
