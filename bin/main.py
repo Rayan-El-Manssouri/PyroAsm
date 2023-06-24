@@ -12,7 +12,6 @@ from PyQt6.QtGui import QIcon
 init()
 
 class Color(QWidget):
-
     def __init__(self, color):
         super(Color, self).__init__()
         self.setAutoFillBackground(True)
@@ -34,7 +33,11 @@ class Compilateur:
         compteur_erreurs = 0  # Compteur d'erreurs
         for argument in arguments:
             with open(argument, "r", encoding="utf-8") as file:
+                
                 code = file.read()
+                # mettre tous sur une seul ligne
+                code = code.replace("\n", "")
+                print(code)
                 matches = re.findall(r'const\s+(\w+)\s*=\s*(.+)', code)
                 variables = {}
 
@@ -52,14 +55,21 @@ class Compilateur:
                                 value = value[1:-1]
                             value = self.replace_variables(value, variables)  # Remplacer les variables
                             print(value)
-                        if fonction == "pyrowin" and value == '""':
-                            print(value)
-                            self.create_window(r"C:\\Program Files\\PyroAsm\\assets\\logo.png")
-                        if fonction == "pyrowin" and 'icon: ' in value:
-                            icon_value = value.split('icon: ')[1].strip('"')
-                            self.create_window(icon_value)
+                        if fonction == "pyrowin":
+                            dark_mode = True  # Valeur par défaut
+                            if 'dark: false' in value:
+                                dark_mode = False
 
-
+                            if 'icon: ' in value or 'title: ' in value:
+                                pairs = value.split(',')
+                                icon_value = None
+                                title_value = None
+                                for pair in pairs:
+                                    if 'icon: ' in pair:
+                                        icon_value = pair.split('icon: ')[1].strip().strip('"')
+                                    elif 'title: ' in pair:
+                                        title_value = pair.split('title: ')[1].strip().strip('"')
+                                self.create_window(icon_value, title_value, dark_mode)
                     else:
                         suggestion = None
                         for f in self.fonctions_autorisees:
@@ -95,16 +105,26 @@ class Compilateur:
         value = re.sub(r'\$(\w+)', replace_variable, value)
         return value
     
-    def create_window(self, Icon):
+    def create_window(self, Icon, Title, DarkMode):
+        if DarkMode == True:
+            DarkMode = (12, 12, 13)
+        else:
+            DarkMode = (255, 255, 255)
+
         if Icon == None:
             icon = r"C:\\Program Files\\PyroAsm\\assets\\logo.png"
         else:
             icon = Icon
+
+        if Title == None:
+            title = "PyRowin"
+        else:
+            title = Title
         app = QApplication([])
         window = QMainWindow()
-        window.setWindowTitle("PyRowin")
+        window.setWindowTitle(title)
         window.resize(800, 600)
-        title_bar_color = QColor(12, 12, 13)
+        title_bar_color = QColor(*DarkMode)
         app.setPalette(QPalette(title_bar_color))
         layout = QVBoxLayout()
         layout.addWidget(Color('white'))
