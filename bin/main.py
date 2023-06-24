@@ -2,9 +2,23 @@ import sys
 import re
 from colorama import init, Fore
 from PyQt6.QtWidgets import QApplication, QMainWindow
-
+from PyQt6.QtGui import QColor, QPalette
+from PyQt6.QtCore import Qt
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PyQt6.QtGui import QColor, QPalette
 # Initialiser colorama
 init()
+
+class Color(QWidget):
+
+    def __init__(self, color):
+        super(Color, self).__init__()
+        self.setAutoFillBackground(True)
+
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, QColor(color))
+        self.setPalette(palette)
 
 class Compilateur:
     def __init__(self):
@@ -76,13 +90,21 @@ class Compilateur:
         return value
     
     def create_window(self):
-        app = QApplication(sys.argv)
+        app = QApplication([])
         window = QMainWindow()
         window.setWindowTitle("PyRowin")
         window.resize(800, 600)
-        # Ajoute ici le code pour configurer et afficher ta fenêtre graphique avec PyQt6
+        title_bar_color = QColor(12, 12, 13)
+        app.setPalette(QPalette(title_bar_color))
+        layout = QVBoxLayout()
+        layout.addWidget(Color('white'))
+        layout.setContentsMargins(0,0,0,0)
+        widget = QWidget()
+        widget.setLayout(layout)
+        window.setCentralWidget(widget)
         window.show()
         sys.exit(app.exec())
+
 
 
 # Utilisation de la classe Compilateur
