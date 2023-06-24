@@ -53,36 +53,12 @@ class Compilateur:
                             value = self.replace_variables(value, variables)  # Remplacer les variables
                             print(value)
                         if fonction == "pyrowin" and value == '""':
-                            self.create_window()
-                            if value == '""':
-                                self.create_window()
-                            elif value.startswith("Settings"):
-                                settings_arg = ""
-                                multiline_settings = False
+                            print(value)
+                            self.create_window(r"C:\\Program Files\\PyroAsm\\assets\\logo.png")
+                        if fonction == "pyrowin" and 'icon: ' in value:
+                            icon_value = value.split('icon: ')[1].strip('"')
+                            self.create_window(icon_value)
 
-                                # Parcours les lignes suivantes pour obtenir l'argument de Settings complet
-                                for line in code.splitlines()[code.splitlines().index(fonction + "(" + value) + 1:]:
-                                    if ")" in line:
-                                        settings_arg += line.split(")")[0]
-                                        break
-                                    else:
-                                        settings_arg += line
-                                        multiline_settings = True
-
-                                if multiline_settings:
-                                    # Continue de lire les lignes suivantes jusqu'à trouver la fin de l'argument
-                                    for line in code.splitlines()[code.splitlines().index(fonction + "(" + value) + 2:]:
-                                        if ")" in line:
-                                            settings_arg += line.split(")")[0]
-                                            break
-                                        else:
-                                            settings_arg += line
-
-                                if "icon" in settings_arg:
-                                    icon_name = re.findall(r'icon:\s*"(.+)"', settings_arg)
-                                    if icon_name:
-                                        icon_path = icon_name[0]
-                                        print("Chemin de l'icône :", icon_path)
 
                     else:
                         suggestion = None
@@ -119,7 +95,11 @@ class Compilateur:
         value = re.sub(r'\$(\w+)', replace_variable, value)
         return value
     
-    def create_window(self):
+    def create_window(self, Icon):
+        if Icon == None:
+            icon = r"C:\\Program Files\\PyroAsm\\assets\\logo.png"
+        else:
+            icon = Icon
         app = QApplication([])
         window = QMainWindow()
         window.setWindowTitle("PyRowin")
@@ -133,7 +113,7 @@ class Compilateur:
         widget.setLayout(layout)
         window.setCentralWidget(widget)
         # definir une icon
-        icon = QIcon(r"C:\\Program Files\\PyroAsm\\assets\\logo.png")
+        icon = QIcon(icon)
         window.setWindowIcon(icon)
         window.show()
         sys.exit(app.exec())
