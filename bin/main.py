@@ -19,24 +19,24 @@ class Color(QWidget):
 class Compilateur:
     def __init__(self):
         # Liste des noms de fonctions autorisées
-        self.fonctions_autorisees = ["pyrint", "+", "-", "*", "/", "%", "^=", "const", "pyrowin", "fp"]
+        self.fonctions_autorisees = ["pyrint", "+", "-", "*", "/", "%", "^=", "const", "pyrowin", "fp", "NomDemAFunctonPersion"]
         self.fonctions_declarees = {}
-        self.fonction_executant = None
 
     def compiler(self, arguments):
         # Afficher le message de début de compilation
         print(Fore.GREEN + "La compilation a commencé." + Fore.RESET)
         # Traiter les arguments
         compteur_erreurs = 0  # Compteur d'erreurs
+        code_complet = ""
         for argument in arguments:
-            code_complet = ""
             with open(argument, "r", encoding="utf-8") as file:
                 code = file.read()
                 code = code.replace("\n", "")
-   
                 code_complet += code
                 self.process_function_declarations(code_complet)
+                # Voir si une fonction est appelée
                 self.process_function_calls(code_complet)
+                    
                 
         # Afficher le message de fin de compilation et le nombre d'erreurs
         print(Fore.GREEN + "La compilation est terminée." + Fore.RESET)
@@ -49,6 +49,7 @@ class Compilateur:
     def process_const_declarations(self, code):
         matches = re.findall(r'const\s+(\w+)\s*=\s*(.+)', code)
         variables = {}
+
         for match in matches:
             variable_name, value = match
             value = self.evaluate_expression(value, variables)
@@ -56,55 +57,44 @@ class Compilateur:
 
         return variables
     
+
     def process_function_declarations(self, code):
-        matches = re.findall(r'fp\s+(\w+)\s*\(\)\s*\{([^}]+)\}', code)
+        matches = re.findall(r'fp\s+(\w+)\s*\{([^}]+)\}', code)
         for match in matches:
             fonction_name, fonction_code = match
             self.fonctions_declarees[fonction_name] = fonction_code
+
         
     def process_function_calls(self, code):
-        pattern = r'(\w+)\s*\(\s*\)'
+        pattern = r'(\w+)\(\)'
         matches = re.findall(pattern, code)
-        function_calls = []  # Liste pour stocker les appels de fonctions
         for match in matches:
             function_name = match
-            function_calls.append(function_name)  # Ajouter l'appel de fonction à la liste
-
-        # Exécuter les appels de fonctions
-        for function_name in function_calls:
             self.executer_fonction(function_name)
 
-        
 
     def executer_fonction(self, fonction_name):
+        
         # regarder dans liste
         if fonction_name in self.fonctions_declarees:
             # récupe le code de la fonction
             fonction_code = self.fonctions_declarees[fonction_name]
-
-            # Sauvegarder la fonction en cours d'exécution
-            self.fonction_executant = fonction_name
-
+            
             # exécuter le code de la fonction
             self.executer_code(code=fonction_code)
-
-            # Réinitialiser le drapeau de la fonction en cours d'exécution
-            self.fonction_executant = None
             
+        
+    # Créé une def pour excecuter le code
     def executer_code(self, code):
         matches = re.findall(r'pyrint\s*\(\s*(.+)\s*\)', code)
         for match in matches:
             value = match.replace('"', '')
-            # Exécuter uniquement si la fonction en cours d'exécution correspond
-            if self.fonction_executant is None or self.fonction_executant == "__main__":
-                print(value)
-
+            print(value)
+        
         matches = re.findall(r'pyrowin\s*\(\s*(.+)\s*\)', code)
         for match in matches:
             value = match.replace('"', '')
-            # Exécuter uniquement si la fonction en cours d'exécution correspond
-            if self.fonction_executant is None or self.fonction_executant == "__main__":
-                self.create_window(Icon=None, Title=value, DarkMode=True)
+            self.create_window(Icon=None, Title=value, DarkMode=True)
              
             
     def replace_variables(self, value, variables):
@@ -118,6 +108,8 @@ class Compilateur:
         value = re.sub(r'\$(\w+)', replace_variable, value)
         return value
     
+
+
     def create_window(self, Icon, Title, DarkMode):
         if DarkMode == True:
             DarkMode = (12, 12, 13)
