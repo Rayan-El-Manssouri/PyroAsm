@@ -74,29 +74,43 @@ class Compilateur:
 
 
     def executer_fonction(self, fonction_name):
-        
         # regarder dans liste
         if fonction_name in self.fonctions_declarees:
             # récupe le code de la fonction
             fonction_code = self.fonctions_declarees[fonction_name]
-            
             # exécuter le code de la fonction
             self.executer_code(code=fonction_code)
             
         
     # Créé une def pour excecuter le code
     def executer_code(self, code):
-        matches = re.findall(r'pyrint\s*\(\s*(.+)\s*\)', code)
-        for match in matches:
-            value = match.replace('"', '')
-            print(value)
-        
+        matches = re.findall(r'Settings::\(\s*([^()]+)\s*\)', code)
+        settings = {}
+        if matches:
+            params_values = matches[0].split(',')
+            for param_value in params_values:
+                param_value = param_value.strip()
+                if ':' in param_value:
+                    param, value = param_value.split(':', 1)
+                    settings[param.strip()] = value.strip()
+
         matches = re.findall(r'pyrowin\s*\(\s*(.+)\s*\)', code)
         for match in matches:
             value = match.replace('"', '')
             self.create_window(Icon=None, Title=value, DarkMode=True)
-             
-            
+
+    def apply_settings(self, code):
+        matches = re.findall(r'(\w+)\s*:\s*([^,]+)', code)
+        settings = {}
+        for match in matches:
+            setting_name, value = match
+            settings[setting_name] = value
+
+        if 'backgroundColor' in settings:
+            background_color = settings['backgroundColor']
+            print("background_color =", background_color)
+
+        
     def replace_variables(self, value, variables):
         def replace_variable(match):
             variable_name = match.group(1)

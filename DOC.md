@@ -43,11 +43,29 @@ Pyro Asm permet également de créer des fenêtres graphiques. Pour créer une f
 
 
 ```white
-pyrowin("Nom De Ma fenêtre")
+fp main{
+    pyrowin(close_.png, Hello World)
+}
+
+main()
 ```
 
 
-Cette commande créera une fenêtre avec le nom spécifié.
+Si vous souhaiter avoir la barre des titres noir alors ne mettre aucuns de 3er arguements paramètres à la fonction `pyrowin`.
+```white
+fp main{
+    pyrowin(close_.png, Hello World)
+}
+
+main()
+```
+
+
+Cette commande créera une fenêtre avec le nom spécifié et l'icon / mode fond.
+
+
+* Note : Vous pouvez également utiliser la fonction `pyrowin` sans paramètre pour créer une fenêtre sans nom. Cependant, il est recommandé d'utiliser un nom pour votre fenêtre afin de pouvoir la fermer plus tard.
+- Actuellement, il est nécessaire de mettre tous les éléments dans une fonction déclarée dans la fonction principale (main ou autre selon vôtre choix) pour que cela fonctionne correctement.
 
 N'hésitez pas à explorer davantage la documentation de Pyro Asm pour découvrir d'autres fonctionnalités et options disponibles.
 
