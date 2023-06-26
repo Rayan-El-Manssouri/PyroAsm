@@ -86,6 +86,9 @@ class Compilateur:
     def executer_code(self, code):
         matches = re.findall(r'Settings::\(\s*([^()]+)\s*\)', code)
         settings = {}
+        backgroundColor = "white"
+        Icon = "C:\\Program Files\\PyroAsm\\assets\\logo.png"
+        DarkMode = "True"
         if matches:
             params_values = matches[0].split(',')
             for param_value in params_values:
@@ -93,22 +96,19 @@ class Compilateur:
                 if ':' in param_value:
                     param, value = param_value.split(':', 1)
                     settings[param.strip()] = value.strip()
+                    # récuperer la propriété backgroundColor
+                    if 'backgroundColor' in settings:
+                        backgroundColor = settings['backgroundColor']
+                    if 'Icon' in settings:
+                        Icon = settings['Icon']
+                    if 'DarkMode' in settings:
+                        DarkMode = settings['DarkMode']
+        print(DarkMode)
 
         matches = re.findall(r'pyrowin\s*\(\s*(.+)\s*\)', code)
         for match in matches:
             value = match.replace('"', '')
-            self.create_window(Icon=None, Title=value, DarkMode=True)
-
-    def apply_settings(self, code):
-        matches = re.findall(r'(\w+)\s*:\s*([^,]+)', code)
-        settings = {}
-        for match in matches:
-            setting_name, value = match
-            settings[setting_name] = value
-
-        if 'backgroundColor' in settings:
-            background_color = settings['backgroundColor']
-            print("background_color =", background_color)
+            self.create_window(Icon=Icon, Title=value, DarkMode=DarkMode, backgroundColor=backgroundColor)
 
         
     def replace_variables(self, value, variables):
@@ -124,11 +124,11 @@ class Compilateur:
     
 
 
-    def create_window(self, Icon, Title, DarkMode):
-        if DarkMode == True:
-            DarkMode = (12, 12, 13)
+    def create_window(self, Icon, Title, DarkMode, backgroundColor):
+        if DarkMode == "True":
+            DarkMode = "#000"
         else:
-            DarkMode = (255, 255, 255)
+            DarkMode = "#fff"
 
         if Icon == None:
             icon = r"C:\\Program Files\\PyroAsm\\assets\\logo.png"
@@ -139,15 +139,20 @@ class Compilateur:
             title = "PyRowin"
         else:
             title = Title
+        
+        if backgroundColor == None:
+            backgroundColor = (255, 255, 255)
+        else:
+            backgroundColor = backgroundColor
 
         app = QApplication([])
         window = QMainWindow()
         window.setWindowTitle(title)
         window.resize(800, 600)
-        title_bar_color = QColor(*DarkMode)
+        title_bar_color = QColor(DarkMode)
         app.setPalette(QPalette(title_bar_color))
         layout = QVBoxLayout()
-        layout.addWidget(Color('white'))
+        layout.addWidget(Color(backgroundColor))
         layout.setContentsMargins(0, 0, 0, 0)
         widget = QWidget()
         widget.setLayout(layout)
