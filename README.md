@@ -59,4 +59,5 @@ Exécutez votre code en utilisant l'option -r. Exemple :
 pyroasm -r .\index.pa
 ```
 
-Pour plus d'informations, consultez la documentation complète de PyroAsm.
+Pour plus d'informations, consultez la [documentation](./DOC.md)
+ complète de PyroAsm.
